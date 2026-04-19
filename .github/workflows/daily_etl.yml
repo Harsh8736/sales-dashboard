@@ -1,0 +1,47 @@
+name: Daily ETL Pipeline
+
+on:
+  schedule:
+    - cron: "0 2 * * *"   # Every day at 2:00 AM UTC
+  workflow_dispatch:        # Also allows manual trigger from GitHub UI
+
+jobs:
+  etl:
+    name: Extract → Transform → Load → Validate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Download Superstore CSV
+        # If you store the CSV in a private release asset or S3, replace this step.
+        # For now we look for data/superstore.csv committed or available via env secret.
+        run: |
+          mkdir -p data logs
+          if [ ! -f data/superstore.csv ]; then
+            echo "superstore.csv not found — skipping (add it to the data/ folder)"
+          fi
+
+      - name: Run pipeline
+        run: python etl/pipeline.py
+
+      - name: Run validation
+        run: python etl/validate.py
+
+      - name: Upload logs as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pipeline-logs-${{ github.run_number }}
+          path: logs/
+          retention-days: 7

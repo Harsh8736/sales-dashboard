@@ -1,0 +1,21 @@
+# Data files (not committed to git — too large / sensitive)
+data/superstore.csv
+data/sales.db
+
+# Logs
+logs/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
