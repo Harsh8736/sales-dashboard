@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  etl-pipeline:
+    build: .
+    container_name: sales-etl
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  validate:
+    build: .
+    container_name: sales-validate
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    command: python etl/validate.py
+    depends_on:
+      - etl-pipeline
