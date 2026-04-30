@@ -1,6 +1,4 @@
-# Data files (not committed to git — too large / sensitive)
-data/superstore.csv
-data/sales.db
+
 
 # Logs
 logs/
